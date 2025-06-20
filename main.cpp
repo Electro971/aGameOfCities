@@ -173,6 +173,8 @@ void selectPlayers()
         cout << "Enter the name for Player " << (i + 1) << ": ";
         getline(cin, playerName);
         player p(playerName);
+        //chose color eventually
+        p.setColor("green");
         playerList.push_back(p);
     }
     playList = playerList;
@@ -181,6 +183,7 @@ void selectPlayers()
 
 int main()
 {
+   
     cout<<feat(col, "red")<<"Welcome to the Territory Board Game!"<< osm::feat(osm::rst, "color")<<endl;
     mainMenu();
     printControls();
@@ -190,6 +193,7 @@ int main()
         string input;
         cout << "Enter a command: ";
         cin>>input;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         if (input == "exit" || input == "quit") {
             break;
         }

@@ -1,12 +1,15 @@
 #include "territory.h"
+#include "player.h"
 #include <iostream>
+#include <osmanip/manipulators/colsty.hpp>
 using namespace std;
+using namespace osm;
 
-territory::territory() : id("AAA"), name("Unknown") {}
+territory::territory() : id("AAA"), name("Unknown"), owner(nullptr) {}
 
-territory::territory(const string& id, const string& name) : id(id), name(name) {}
+territory::territory(const string& id, const string& name) : id(id), name(name), owner(nullptr) {}
 
-territory::territory(const territory& other) : id(other.id), name(other.name) {}
+territory::territory(const territory& other) : id(other.id), name(other.name), owner(other.owner) {}
 
 territory& territory::operator=(const territory& other)
 {
@@ -14,14 +17,23 @@ territory& territory::operator=(const territory& other)
     {
         id = other.id;
         name = other.name;
+        owner = other.owner;
     }
     return *this;
 }
 
 void territory::printTerritory() const
 {
-    cout << "Territory ID: " << id << ", Name: " << name << endl;
+    if (owner) cout << feat(col, owner->getColor());
+    cout << "Territory ID: " << id << endl;
+    cout << "Name: " << name << endl;
     cout << "Number of Troops: " << troops << endl;
+    if (owner) {
+        cout << "Owner: " << owner->getName() << endl;
+        cout<<feat(rst, "all");
+    } else {
+        cout << "Owner: None" << endl;
+    }
 }
 
 void territory::setId(const string& newId)
@@ -49,14 +61,14 @@ int territory::getTroops() const
     return troops;
 }
 
-string territory::getOwner() const
+player& territory::getOwner() const
 {
-    return owner;
+    return *owner;
 }
 
-void territory::setOwner(const string& newOwner)
+void territory::setOwner(player& newOwner)
 {
-    owner = newOwner;
+    owner = &newOwner;
 }
 
 void territory::setTroops(int newTroops)

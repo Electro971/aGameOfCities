@@ -1,6 +1,12 @@
 #include "board.h"
+#include "player.h"
 #include <iostream>
+#include <random>
+#include <osmanip/manipulators/colsty.hpp>
+#include <algorithm>
+
 using namespace std;
+using namespace osm;
 
 // Helper function to generate a three-letter ID from an integer
 inline string generateId(int n) {
@@ -26,7 +32,7 @@ board::board(int rows, int cols) : rows(rows), cols(cols), grid(rows, vector<ter
     }
 }
 
-void board::initializeGameState(vector<player> playerList) {
+void board::initializeGameState(vector<player>& playerList) {
     vector<pair<int, int>> positions;
     for (int r = 0; r < rows; ++r)
         for (int c = 0; c < cols; ++c)
@@ -41,10 +47,9 @@ void board::initializeGameState(vector<player> playerList) {
         int playerIndex = i % numPlayers;
         int r = positions[i].first;
         int c = positions[i].second;
-        grid[r][c].setOwner(playerList[playerIndex].getName());
+        grid[r][c].setOwner(playerList[playerIndex]);
         int troops = rand() % 5 + 1;
         grid[r][c].setTroops(troops);
-        playerList[playerIndex].addTerritory(grid[r][c].getId());
     }
 }
 
@@ -59,9 +64,9 @@ void board::printBoard() const {
         }
         cout << "|\n";
         for (int c = 0; c < cols; ++c) {
-            string owner = grid[r][c].getOwner();
-            cout << "| Owner:" << owner;
-            cout << string(cellWidth - 7 - owner.length(), ' ');
+            player owner = grid[r][c].getOwner();
+            cout << "| Owner: " << owner.getName();
+            cout << string(cellWidth - 8 - owner.getName().length(), ' ');
         }
         cout << "|\n";
         for (int c = 0; c < cols; ++c) {
@@ -80,11 +85,10 @@ void board::selectTerritory(int row, int col) {
         cout << "Invalid territory selection." << endl;
         return;
     }
-    cout << "Selected Territory: ";
     grid[row][col].printTerritory();
 }
 
-void board::selectTerritoryById(const string& tid) const {
+void board::selectTerritoryById(const string& tid) {
     for (int r = 0; r < rows; ++r) {
         for (int c = 0; c < cols; ++c) {
             if (grid[r][c].getId() == tid) {

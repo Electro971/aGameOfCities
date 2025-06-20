@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "player.h"
 #include <iostream>
 using namespace std;
 
@@ -17,14 +18,14 @@ class territory
         string getId() const;
         string getName() const;
         int getTroops() const;
-        string getOwner() const;
-        void setOwner(const string& newOwner);
+        player& getOwner() const;
+        void setOwner(player& newOwner);
         void setTroops(int newTroops);
         void increaseTroops();
 
     private:
         string id;
         string name;
-        string owner = "None";
+        player* owner = nullptr;
         int troops = 0;
 };
