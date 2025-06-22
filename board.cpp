@@ -59,19 +59,28 @@ void board::printBoard() const {
     cout << "+\n";
     for (int r = 0; r < rows; ++r) {
         for (int c = 0; c < cols; ++c) {
-            cout << "| ID:" << grid[r][c].getId();
-            cout << string(cellWidth - 4 - grid[r][c].getId().length(), ' ');
+            cout<<"| ";
+            cout<<feat(col, grid[r][c].getOwner().getColor());
+            cout << "ID: "<<grid[r][c].getId();
+            cout<<feat(rst, "all");
+            cout << string(cellWidth - 5 - grid[r][c].getId().length(), ' ');
         }
         cout << "|\n";
         for (int c = 0; c < cols; ++c) {
+            cout << "| ";
+            cout<<feat(col, grid[r][c].getOwner().getColor());
             player owner = grid[r][c].getOwner();
-            cout << "| Owner: " << owner.getName();
+            cout <<"Owner: "<< owner.getName();
+            cout<<feat(rst, "all");
             cout << string(cellWidth - 8 - owner.getName().length(), ' ');
         }
         cout << "|\n";
         for (int c = 0; c < cols; ++c) {
+            cout << "| ";
+            cout<<feat(col, grid[r][c].getOwner().getColor());
             string troopsStr = to_string(grid[r][c].getTroops());
-            cout << "| Troops:" << troopsStr;
+            cout <<"Troops:"<<troopsStr;
+            cout<<feat(rst, "all");
             cout << string(cellWidth - 8 - troopsStr.length(), ' ');
         }
         cout << "|\n";

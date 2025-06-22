@@ -174,7 +174,22 @@ void selectPlayers()
         getline(cin, playerName);
         player p(playerName);
         //chose color eventually
-        p.setColor("green");
+        //for now, p1 = red, p2 = blue, p3 = yellow, all other = green
+        switch ((i+1)%4)
+        {
+            case 1:
+                p.setColor("red");
+                break;
+            case 2:
+                p.setColor("blue");
+                break;
+            case 3:
+                p.setColor("yellow");
+                break;
+            default:
+                p.setColor("green");
+                break;
+        }
         playerList.push_back(p);
     }
     playList = playerList;
