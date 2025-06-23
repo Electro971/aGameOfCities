@@ -50,42 +50,40 @@ void board::initializeGameState(vector<player>& playerList) {
         grid[r][c].setOwner(playerList[playerIndex]);
         int troops = rand() % 5 + 1;
         grid[r][c].setTroops(troops);
+        grid[r][c].getOwner().setTroops(grid[r][c].getOwner().getTroops()+troops);
     }
 }
 
 void board::printBoard() const {
-    const int cellWidth = 18;
-    for (int c = 0; c < cols; ++c) cout << "+" << string(cellWidth, '-');
-    cout << "+\n";
+    const int cellWidth = 9;
+    const int cellHeight = 3; // 1 for border, 1 for content, 1 for border
+
     for (int r = 0; r < rows; ++r) {
+        // Print top border for each cell in the row
         for (int c = 0; c < cols; ++c) {
-            cout<<"| ";
-            cout<<feat(col, grid[r][c].getOwner().getColor());
-            cout << "ID: "<<grid[r][c].getId();
-            cout<<feat(rst, "all");
-            cout << string(cellWidth - 5 - grid[r][c].getId().length(), ' ');
+            cout << "+" << string(cellWidth - 2, '-') << "+ ";
         }
-        cout << "|\n";
+        cout << "\n";
+        // Print content line for each cell in the row
         for (int c = 0; c < cols; ++c) {
+            const territory& t = grid[r][c];
+            cout << "|";
+            cout << feat(col, t.getOwner().getColor());
+            // Format: [ID] [Troops], padded to fit cell
+            string content = t.getId() + " " + to_string(t.getTroops());
+            int pad = cellWidth - 2 - content.length();
+            int padLeft = pad / 2;
+            int padRight = pad - padLeft;
+            cout << string(padLeft, ' ') << content << string(padRight, ' ');
+            cout << feat(rst, "all");
             cout << "| ";
-            cout<<feat(col, grid[r][c].getOwner().getColor());
-            player owner = grid[r][c].getOwner();
-            cout <<"Owner: "<< owner.getName();
-            cout<<feat(rst, "all");
-            cout << string(cellWidth - 8 - owner.getName().length(), ' ');
         }
-        cout << "|\n";
+        cout << "\n";
+        // Print bottom border for each cell in the row
         for (int c = 0; c < cols; ++c) {
-            cout << "| ";
-            cout<<feat(col, grid[r][c].getOwner().getColor());
-            string troopsStr = to_string(grid[r][c].getTroops());
-            cout <<"Troops:"<<troopsStr;
-            cout<<feat(rst, "all");
-            cout << string(cellWidth - 8 - troopsStr.length(), ' ');
+            cout << "+" << string(cellWidth - 2, '-') << "+ ";
         }
-        cout << "|\n";
-        for (int c = 0; c < cols; ++c) cout << "+" << string(cellWidth, '-');
-        cout << "+\n";
+        cout << "\n";
     }
 }
 

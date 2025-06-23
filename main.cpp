@@ -74,16 +74,34 @@ void setupMap()
     //clear cin
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     vector<string> maps = {"Basic Map", "World Map", "Europe Map", "Asia Map", "Africa Map", "North America Map", "South America Map"};
+    
+    cout<<feat(col, "red");
+    cout<<endl<<"Welcome to Map setup!"<<endl;
+    cout<<feat(rst, "all");
+    
     cout << "Please select a map from the following list: " << endl;
+    int counter = 0;
     for (string i : maps)
     {
-        cout << "- " << i << endl;
+        counter++;
+        cout << counter << ". " << i << endl;
     }
     string mapChoice;
-    cout << "Enter your choice: ";
+    cout<<"Enter your choice: ";
     getline(cin, mapChoice);
+    try
+    {
+        {
+            int mc = stoi(mapChoice);
+            createMap(maps[mc-1]);
+            return;
+        }
+    }
+    catch(...)
+    {
     
-    cout << endl;
+    }
+    
     createMap(mapChoice);
 }
 
@@ -139,16 +157,21 @@ void printControls()
 {
     cout << "Controls:" << endl;
     cout << "1. Type 's' or 'S' to select a territory." << endl;
-    cout << "2. Type 'p' or 'P' to print the board." << endl;
-    cout << "3. Type 'q' or 'Q' to quit the game." << endl;
-    cout << "4. Type 'h' or 'H' to print this help message." << endl;
-    cout << "5. Type 'exit' or 'quit' to exit the program." << endl;
+    cout << "2. Type 'b' or 'B' to print the board." << endl;
+    cout << "3. Type 'p' or 'P' to view player statistics." << endl;
+    cout << "4. Type 'q' or 'Q' to quit the game." << endl;
+    cout << "5. Type 'h' or 'H' to print this help message." << endl;
+    cout << "6. Type 'exit' or 'quit' to exit the program." << endl;
     cout << endl;
 }
 
 void selectPlayers()
 {
     int numPlayers;
+    
+    cout<<feat(col, "red");
+    cout<<endl<<"Welcome to Player setup!"<<endl;
+    cout<<feat(rst, "all");
     cout << "Enter the number of players (2-4): ";
     while (true)
     {
@@ -165,12 +188,12 @@ void selectPlayers()
             break;
         }
     }
-    cout << "You have selected " << numPlayers << " players." << endl;
+    cout<<"You have selected "<<numPlayers<<" players."<<endl<<endl;
     vector<player> playerList;
     for (int i = 0; i < numPlayers; ++i)
     {
         string playerName;
-        cout << "Enter the name for Player " << (i + 1) << ": ";
+        cout <<"Enter the name for Player " << (i + 1) << ": ";
         getline(cin, playerName);
         player p(playerName);
         //chose color eventually
@@ -198,7 +221,6 @@ void selectPlayers()
 
 int main()
 {
-   
     cout<<feat(col, "red")<<"Welcome to the Territory Board Game!"<< osm::feat(osm::rst, "color")<<endl;
     mainMenu();
     printControls();

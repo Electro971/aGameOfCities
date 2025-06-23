@@ -1,23 +1,21 @@
 #include "player.h"
 #include <iostream>
+#include <osmanip/manipulators/colsty.hpp>
 using namespace std;
 
 player::player()
 {
     name = "None";
 }
-player::player(const string& playerName) : name(playerName), score(0), troops(0) {}
-
-void player::increaseScore(int points) {
-    score += points;
-}
+player::player(const string& playerName) : name(playerName), troops(0) {}
 
 string player::getName() const {
     return name;
 }
 
-int player::getScore() const {
-    return score;
+int player::getTroops()
+{
+    return troops;
 }
 
 void player::setTroops(int numTroops) {
@@ -37,8 +35,8 @@ void player::setColor(string input)
 }
 
 void player::playerSummary() const {
+    cout<<osm::feat(osm::col, color);
     cout << "Player: " << name << endl;
-    cout << "Score: " << score << endl;
     cout << "Troops: " << troops << endl;
-    cout << "Color: " << color << endl;
+    cout<<osm::feat(osm::rst, "all");
 }
