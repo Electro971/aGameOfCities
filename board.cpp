@@ -9,7 +9,8 @@ using namespace std;
 using namespace osm;
 
 // Helper function to generate a three-letter ID from an integer
-inline string generateId(int n) {
+inline string generateId(int n)
+{
     string id(3, 'A');
     id[0] += (n / (26 * 26)) % 26;
     id[1] += (n / 26) % 26;
@@ -30,7 +31,27 @@ board::board(int rows, int cols) : rows(rows), cols(cols), grid(rows, vector<ter
             grid[r][c].setName("T" + grid[r][c].getId());
         }
     }
+    // Build adjacency matrix
+    int n = rows * cols;
+    adjacencyMatrix = vector<vector<bool>>(n, vector<bool>(n, false));
+    const int dr[] = {-1, 1, 0, 0};
+    const int dc[] = {0, 0, -1, 1};
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            int idx = r * cols + c;
+            for (int d = 0; d < 4; ++d) {
+                int nr = r + dr[d];
+                int nc = c + dc[d];
+                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                    int nidx = nr * cols + nc;
+                    adjacencyMatrix[idx][nidx] = true;
+                }
+            }
+        }
+    }
 }
+
+
 
 void board::initializeGameState(vector<player>& playerList) {
     vector<pair<int, int>> positions;
@@ -56,56 +77,72 @@ void board::initializeGameState(vector<player>& playerList) {
 
 void board::printBoard() const {
     const int cellWidth = 9;
-    const int cellHeight = 3; // 1 for border, 1 for content, 1 for border
-
     for (int r = 0; r < rows; ++r) {
-        // Print top border for each cell in the row
-        for (int c = 0; c < cols; ++c) {
-            cout << "+" << string(cellWidth - 2, '-') << "+ ";
-        }
-        cout << "\n";
-        // Print content line for each cell in the row
+        // Content line for each cell
         for (int c = 0; c < cols; ++c) {
             const territory& t = grid[r][c];
-            cout << "|";
+            // No left border
             cout << feat(col, t.getOwner().getColor());
-            // Format: [ID] [Troops], padded to fit cell
             string content = t.getId() + " " + to_string(t.getTroops());
-            int pad = cellWidth - 2 - content.length();
+            int pad = cellWidth - content.length();
             int padLeft = pad / 2;
             int padRight = pad - padLeft;
             cout << string(padLeft, ' ') << content << string(padRight, ' ');
             cout << feat(rst, "all");
-            cout << "| ";
+            // Horizontal connection to the right (centered between cells)
+            if (c < cols - 1) {
+                int idx = r * cols + c;
+                int rightIdx = r * cols + (c + 1);
+                if (adjacencyMatrix[idx][rightIdx]) {
+                    cout << '-';
+                } else {
+                    cout << ' ';
+                }
+            }
         }
         cout << "\n";
-        // Print bottom border for each cell in the row
-        for (int c = 0; c < cols; ++c) {
-            cout << "+" << string(cellWidth - 2, '-') << "+ ";
+        // Vertical connections to the row below
+        if (r < rows - 1) {
+            for (int c = 0; c < cols; ++c) {
+                int idx = r * cols + c;
+                int belowIdx = (r + 1) * cols + c;
+                if (adjacencyMatrix[idx][belowIdx]) {
+                    cout << string((cellWidth) / 2, ' ') << "|" << string(cellWidth - (cellWidth) / 2 - 1, ' ');
+                } else {
+                    cout << string(cellWidth, ' ');
+                }
+                // Space between cells
+                if (c < cols - 1) {
+                    cout << " ";
+                }
+            }
+            cout<<endl;
         }
-        cout << "\n";
     }
+    cout<<endl;
 }
 
-void board::selectTerritory(int row, int col) {
+bool board::selectTerritory(int row, int col) {
     if (row < 0 || row >= rows || col < 0 || col >= cols) {
         cout << "Invalid territory selection." << endl;
-        return;
+        return false;
     }
     grid[row][col].printTerritory();
+    return true;
 }
 
-void board::selectTerritoryById(const string& tid) {
+bool board::selectTerritoryById(const string& tid) {
     for (int r = 0; r < rows; ++r) {
         for (int c = 0; c < cols; ++c) {
             if (grid[r][c].getId() == tid) {
                 cout << "Selected Territory: ";
                 grid[r][c].printTerritory();
-                return;
+                return true;
             }
         }
     }
     cout << "No territory with ID: " << tid << endl;
+    return false;
 }
 
 void board::renameGrid(vector<string> newNames, vector<string> newIds) {
@@ -123,9 +160,29 @@ void board::renameGrid(vector<string> newNames, vector<string> newIds) {
     }
 }
 
-int board::getRows() const { return rows; }
-int board::getCols() const { return cols; }
+bool board::doesBorder(string one, string two) {
+    int idxOne = -1, idxTwo = -1;
+    // Find indices for the given IDs
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            if (grid[r][c].getId() == one) idxOne = r * cols + c;
+            if (grid[r][c].getId() == two) idxTwo = r * cols + c;
+        }
+    }
+    if (idxOne == -1 || idxTwo == -1) return false;
+    return adjacencyMatrix[idxOne][idxTwo];
+}
 
+territory* board::getTerritoryById(const string& id) {
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            if (grid[r][c].getId() == id) {
+                return &grid[r][c];
+            }
+        }
+    }
+    return nullptr;
+}
 vector<territory>& board::operator[](int row) {
     return grid[row];
 }

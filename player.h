@@ -23,6 +23,9 @@ class player
 
         void setColor(string);
 
+        bool operator==(const player& other) const;
+        bool operator!=(const player& other) const;
+
     private:
         string name; // Player's name
         int troops; // Number of troops the player has

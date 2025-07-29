@@ -1,0 +1,7 @@
+-- TO DO --
+    Territory adjacency logic
+    Territory visual connectors
+    Turn logic
+
+-- DONE -- 
+    Attack logic

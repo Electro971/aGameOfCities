@@ -238,27 +238,16 @@ int main()
         switch (cmd) {
             case 'q':
                 return 0;
-            case 's': case 'S': {
-                cout << "Enter the three-letter territory ID to select (e.g., APH): ";
-                string tid;
+            case 's': case 'S':
+            {    
+            cout << "Enter the three-letter territory ID to select (e.g., APH): ";
+                string tid="";
                 getline(cin, tid);
-                bool found = false;
-                for (int r = 0; r < 3; ++r) {
-                    for (int c = 0; c < 3; ++c) {
-                        if (playBoard[r][c].getId() == tid) {
-                            playBoard.selectTerritory(r, c);
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (found) break;
-                }
-                if (!found) {
-                    cout << "No territory with ID: " << tid << endl;
-                }
+                playBoard.selectTerritoryById(tid);
                 break;
             }
-            case 'p': {
+            case 'p':
+            {
                 cout << "Select a player:" << endl;
                 for (int i = 0; i < playList.size(); ++i)
                 {
@@ -276,12 +265,34 @@ int main()
                 }
                 break;
             }
+            case 'a': case 'A':
+            {
+                cout<<"From: ";
+                string start= "";
+                cin>>start;
+                cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                cout<<"To: ";
+                string end = "";
+                cin>>end;
+                cin.ignore(999,'\n');
+                if (playBoard.doesBorder(start,end));
+                else
+                    cout<<"Invalid selection.\nTiles do not border."<<endl;
+                if (playBoard.getTerritoryById(start)->getOwner() != playBoard.getTerritoryById(end)->getOwner())
+                {
+                    cout<<"Attacking tile "<<start<<" from tile "<<end<<endl;
+                }
+                else
+                    cout<<"Invalid selection.\nTiles share an owner."<<endl;
+                break;
+            }
             case 'h' : case 'H':
                 printControls();
                 break;
             default:
                 playBoard.printBoard();
                 break;
+            
         }
     }
     return 0;

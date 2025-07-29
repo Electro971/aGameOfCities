@@ -40,3 +40,11 @@ void player::playerSummary() const {
     cout << "Troops: " << troops << endl;
     cout<<osm::feat(osm::rst, "all");
 }
+
+bool player::operator==(const player& other) const {
+    return name == other.name;
+}
+
+bool player::operator!=(const player& other) const {
+    return !(*this == other);
+}
